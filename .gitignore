@@ -1,0 +1,8 @@
+
+\.venv/
+
+\.idea/
+
+hs/composer/__pycache__/
+
+*.pyc
