@@ -1,6 +1,5 @@
 from interfaces import HSPlugin
 from pluggy import HookimplMarker
-import os
 import asyncio
 from photonpump import connect as p_connect
 from threading import Thread
@@ -14,6 +13,9 @@ class EventStore(HSPlugin):
     To manage async creep (ie prevent the entire application from having to be wrapped in async decorators,
     and to only have the io-bound code in async) the async loop is wrapped in a thread.
     """
+
+    name = "eventstore"
+
     def __init__(self):
         super().__init__()
         self.photonpump_connection = None
@@ -24,7 +26,7 @@ class EventStore(HSPlugin):
         connect = asyncio.ensure_future(self.get_p(), loop=self.loop)
         self.loop.run_until_complete(connect)  # block here: connection or bust!
         # TODO: check we have a connection before continuing
-        self.pm.hook.log_notice(message="activated", plugin_name="eventstore")
+        self.log.notice("activated")
         self.my_thread = Thread(target=self.start_background_loop, args=(self.loop,))
         self.my_thread.start()
 
@@ -81,14 +83,15 @@ class EventStore(HSPlugin):
         """
         asyncio.run_coroutine_threadsafe(
             self.photonpump_connection.create_subscription(
-                subscription_name,
-                stream_name
+                subscription_name, stream_name
             ),
-            loop=self.loop
+            loop=self.loop,
         )
 
     @eventstore
-    def raise_event(self, stream_name: str, event_type: str, event_data: dict, event_metadata: dict):
+    def raise_event(
+        self, stream_name: str, event_type: str, event_data: dict, event_metadata: dict
+    ):
         """
         :param stream_name: name of the stream to post event to
         :param event_type: type of the event
@@ -98,11 +101,9 @@ class EventStore(HSPlugin):
         """
         asyncio.run_coroutine_threadsafe(
             self.photonpump_connection.publish_event(
-                stream_name,
-                event_type,
-                body=event_data,
-                metadata=event_metadata
-            )
+                stream_name, event_type, body=event_data, metadata=event_metadata
+            ),
+            loop=self.loop,
         )
 
     @eventstore

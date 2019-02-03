@@ -1,0 +1,8 @@
+[Core]
+Name = hs-random-name
+Module = __init__
+[Documentation]
+Author = Paul C. Peacock
+Version = 0.0.1
+Website = https://gitlab.com/pcp1976
+Description = Create random names

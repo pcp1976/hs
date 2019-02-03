@@ -19,18 +19,17 @@ class LogLoguru(HSPlugin):
     def activate(self):
         logger.add(
             sys.stderr,
-            level=self.pm.hook.settings_get_value(
-                setting_name="LOGGING_LEVEL"
-            )[0],
-            format="".join([
-                "<c>{time}</c> ",
-                "<level>|{level: <9}|</level> ",
-                "<light-blue>{extra[plugin_name]: <20}</light-blue> ",
-                "<white>{message}</white>"
-            ])
+            level=self.pm.hook.settings_get_value(setting_name="LOGGING_LEVEL")[0],
+            format="".join(
+                [
+                    "<c>{time}</c> ",
+                    "<level>|{level: <9}|</level> ",
+                    "<light-blue>{extra[plugin_name]: <20}</light-blue> ",
+                    "<white>{message}</white>",
+                ]
+            ),
         )
         self.log_notice("loguru logger", "activated")
-
 
     @log_impl
     def log_trace(self, plugin_name, message):

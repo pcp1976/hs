@@ -5,7 +5,6 @@ hs_hookspec = HookspecMarker("hs")
 
 
 class LogSpec:
-
     @hs_hookspec
     def log_trace(self, plugin_name, message):
         pass

@@ -28,7 +28,7 @@ class Composer:
             plugin: HSPlugin = pluginInfo.plugin_object
             plugin.link_pm(self.pm)
             # TODO: implement this in a settings file
-            if plugin.__class__.__name__ == "EventStore":
+            if plugin.name == "eventstore":
                 drop.append(pluginInfo)
                 self.pm.unregister(plugin)
 
