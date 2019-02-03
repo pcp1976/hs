@@ -26,11 +26,10 @@ class RandomName(HSPlugin):
         if name == 'boring' + sep + 'wozniak': # Steve Wozniak is not boring
             continue
         """
-        self.pm.hook.raise_event(
-            stream_name=self.name,
-            event_type="get_random_name",
+        self.event(
+            event_type="random_name_generated",
             event_data={"name": name},
-            event_metadata={}
+            event_metadata={},
         )
         return name
 
@@ -39,7 +38,7 @@ class RandomName(HSPlugin):
         TODO: Need to track used names! Suggest storing in config as list.
         TODO: also, add a "return name" spec, so that used names can be recirculated once dome with
         """
-        pass
+        self.log.notice(f"activated {self.order}")
 
 
 left = [
@@ -262,8 +261,7 @@ right = [
     "pasteur",
     "payne",
     "peacock",  # hubris :)
-    "pengilley"
-    "perlman",
+    "pengilley" "perlman",
     "pike",
     "poincare",
     "poitras",

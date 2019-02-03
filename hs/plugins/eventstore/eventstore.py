@@ -26,9 +26,9 @@ class EventStore(HSPlugin):
         connect = asyncio.ensure_future(self.get_p(), loop=self.loop)
         self.loop.run_until_complete(connect)  # block here: connection or bust!
         # TODO: check we have a connection before continuing
-        self.log.notice("activated")
         self.my_thread = Thread(target=self.start_background_loop, args=(self.loop,))
         self.my_thread.start()
+        self.log.notice(f"activated {self.order}")
 
     @staticmethod
     def start_background_loop(loop):

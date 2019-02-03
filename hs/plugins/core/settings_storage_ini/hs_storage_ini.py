@@ -21,6 +21,11 @@ class Ini(HSPlugin):
     def settings_set_value(self, setting_name: str, setting_value):
         self.config[setting_name] = setting_value
         self.config.write()
+        self.event(
+            event_type="settings_set_value",
+            event_data={"setting_name": setting_name, "setting_value": setting_value},
+            event_metadata={},
+        )
 
     def activate(self):
         configdir = self.pm.hook.filepath_get(plugin_name="settings_storage-ini")[0]

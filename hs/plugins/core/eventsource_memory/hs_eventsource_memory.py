@@ -7,9 +7,7 @@ eventsource = HookimplMarker("hs")
 
 class EventSourceMemory(HSPlugin):
     """
-    Phontonpump uses async to process calls to/from eventstore.
-    To manage async creep (ie prevent the entire application from having to be wrapped in async decorators,
-    and to only have the io-bound code in async) the async loop is wrapped in a thread.
+    Simple, volatile event source using dicts
     """
 
     name = "eventsource_memory"
@@ -18,9 +16,10 @@ class EventSourceMemory(HSPlugin):
         super().__init__()
         self.streams = {}
         self.subscriptions = {}
+        self.order = 4
 
     def activate(self):
-        self.log.notice("activated")
+        self.log.notice(f"activated {self.order}")
 
     @eventsource
     def register_event_handler(self, stream_name, subscription_name, event_handler):

@@ -24,12 +24,12 @@ class LogLoguru(HSPlugin):
                 [
                     "<c>{time}</c> ",
                     "<level>|{level: <9}|</level> ",
-                    "<light-blue>{extra[plugin_name]: <20}</light-blue> ",
+                    "<light-blue>{extra[plugin_name]: <20}:</light-blue> ",
                     "<white>{message}</white>",
                 ]
             ),
         )
-        self.log_notice("loguru logger", "activated")
+        self.log_notice("loguru logger", f"activated {self.order}")
 
     @log_impl
     def log_trace(self, plugin_name, message):
