@@ -6,3 +6,5 @@
 hs/composer/__pycache__/
 
 *.pyc
+
+hs/plugin_files/hs_crypto/
