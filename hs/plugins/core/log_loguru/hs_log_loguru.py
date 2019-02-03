@@ -25,7 +25,7 @@ class LogLoguru(HSPlugin):
             format="".join([
                 "<c>{time}</c> ",
                 "<level>|{level: <9}|</level> ",
-                "<light-blue>{extra[plugin_name]: <15}</light-blue> ",
+                "<light-blue>{extra[plugin_name]: <20}</light-blue> ",
                 "<white>{message}</white>"
             ])
         )

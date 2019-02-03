@@ -14,8 +14,6 @@ class EventStore(HSPlugin):
     To manage async creep (ie prevent the entire application from having to be wrapped in async decorators,
     and to only have the io-bound code in async) the async loop is wrapped in a thread.
     """
-    base_path = os.path.join(os.getcwd(), "plugin_files")
-
     def __init__(self):
         super().__init__()
         self.photonpump_connection = None

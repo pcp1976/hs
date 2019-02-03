@@ -23,13 +23,20 @@ class Composer:
         self.plugin_info_list.sort(key=self.plugin_order)
 
     def activate_plugins(self):
+        drop = []
         for pluginInfo in self.plugin_info_list:
             plugin: HSPlugin = pluginInfo.plugin_object
             plugin.link_pm(self.pm)
+            # TODO: implement this in a settings file
+            if plugin.__class__.__name__ == "EventStore":
+                drop.append(pluginInfo)
+                self.pm.unregister(plugin)
+
         # activate after all possible hooks are registered so that plugins can use hooks
         for pluginInfo in self.plugin_info_list:
-            plugin: HSPlugin = pluginInfo.plugin_object
-            plugin.activate()
+            if pluginInfo not in drop:
+                plugin: HSPlugin = pluginInfo.plugin_object
+                plugin.activate()
 
     def deactivate_plugins(self):
         for pluginInfo in self.plugin_info_list:
