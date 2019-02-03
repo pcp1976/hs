@@ -1,0 +1,8 @@
+[Core]
+Name = hs-storage-ini
+Module = __init__
+[Documentation]
+Author = Paul C. Peacock
+Version = 0.0.1
+Website = https://gitlab.com/pcp1976
+Description = Store settings in an ini file
