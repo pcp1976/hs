@@ -51,6 +51,9 @@ class EventStore(HSPlugin):
         :param event_handler: function which will receive events from the stream
         :return: None
         """
+        # TODO: remember to wrap so that
+        #  a) the event looks like eventsource-memory's and
+        #  b) the event is acknowledged upon completion of the handler
         pass
 
     @eventstore
