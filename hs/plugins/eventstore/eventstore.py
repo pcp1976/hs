@@ -3,36 +3,50 @@ from pluggy import HookimplMarker
 import os
 import asyncio
 from photonpump import connect as p_connect
+from threading import Thread
 
 eventstore = HookimplMarker("hs")
 
 
 class EventStore(HSPlugin):
+    """
+    Phontonpump uses async to process calls to/from eventstore.
+    To manage async creep (ie prevent the entire application from having to be wrapped in async decorators,
+    and to only have the io-bound code in async) the async loop is wrapped in a thread.
+    """
     base_path = os.path.join(os.getcwd(), "plugin_files")
 
     def __init__(self):
         super().__init__()
         self.photonpump_connection = None
-        self.mainloop = asyncio.get_event_loop()
+        self.loop = asyncio.new_event_loop()
+        self.my_thread = None
 
     def activate(self):
-        self.photonpump_connection = asyncio.ensure_future(self.get_p(self.mainloop))
-        self.mainloop.run_until_complete(self.photonpump_connection)
+        connect = asyncio.ensure_future(self.get_p(), loop=self.loop)
+        self.loop.run_until_complete(connect)  # block here: connection or bust!
+        # TODO: check we have a connection before continuing
         self.pm.hook.log_notice(message="activated", plugin_name="eventstore")
+        self.my_thread = Thread(target=self.start_background_loop, args=(self.loop,))
+        self.my_thread.start()
 
-    async def get_p(self, _mainloop):
-        global client
-        client = p_connect(
+    @staticmethod
+    def start_background_loop(loop):
+        asyncio.set_event_loop(loop)
+        loop.run_forever()
+
+    async def get_p(self):
+        self.photonpump_connection = p_connect(
             host=self.pm.hook.settings_get_value(setting_name="EVENTSTORE_URL")[0],
             port=self.pm.hook.settings_get_value(setting_name="EVENTSTORE_TCP_PORT")[0],
             username=self.pm.hook.settings_get_value(setting_name="EVENTSTORE_USER")[0],
             password=self.pm.hook.settings_get_value(setting_name="EVENTSTORE_PASS")[0],
-            loop=_mainloop,
+            loop=self.loop,
         )
-        await client.connect()
+        await self.photonpump_connection.connect()
 
     @eventstore
-    async def register_event_handler(self, stream_name, subscription_name, event_handler):
+    def register_event_handler(self, stream_name, subscription_name, event_handler):
         """
         :param stream_name: name of the stream the event_handler receives events from
         :param subscription_name: identifier for the subscription
@@ -42,14 +56,14 @@ class EventStore(HSPlugin):
         pass
 
     @eventstore
-    async def deregister_event_handler(self, event_handler):
+    def deregister_event_handler(self, event_handler):
         """
         :param event_handler: function which will no longer receive events from the stream
         :return: None
         """
 
     @eventstore
-    async def delete_subscription(self, stream_name, subscription_name):
+    def delete_subscription(self, stream_name, subscription_name):
         """
         :param stream_name: name of the stream to delete the subscription from
         :param subscription_name: identifier of the subscription to delete
@@ -58,19 +72,22 @@ class EventStore(HSPlugin):
         pass
 
     @eventstore
-    async def create_subscription(self, stream_name, subscription_name):
+    def create_subscription(self, stream_name, subscription_name):
         """
         :param stream_name: name of the stream to create the subscription on
         :param subscription_name: identifier for the subscription
         :return: None
         """
-        await self.photonpump_connection.create_subscription(
-            subscription_name,
-            stream_name
+        asyncio.run_coroutine_threadsafe(
+            self.photonpump_connection.create_subscription(
+                subscription_name,
+                stream_name
+            ),
+            loop=self.loop
         )
 
     @eventstore
-    async def raise_event(self, stream_name: str, event_type: str, event_data: dict, event_metadata: dict):
+    def raise_event(self, stream_name: str, event_type: str, event_data: dict, event_metadata: dict):
         """
         :param stream_name: name of the stream to post event to
         :param event_type: type of the event
@@ -78,15 +95,17 @@ class EventStore(HSPlugin):
         :param event_metadata: the event metadata
         :return: None
         """
-        await self.photonpump_connection.publish_event(
-            stream_name,
-            event_type,
-            body=event_data,
-            metadata=event_metadata
+        asyncio.run_coroutine_threadsafe(
+            self.photonpump_connection.publish_event(
+                stream_name,
+                event_type,
+                body=event_data,
+                metadata=event_metadata
+            )
         )
 
     @eventstore
-    async def start_event_streams(self) -> bool:
+    def start_event_streams(self) -> bool:
         """
         Start up the event streams
         :return: bool True on success
@@ -94,7 +113,7 @@ class EventStore(HSPlugin):
         pass
 
     @eventstore
-    async def stop_event_streams(self) -> bool:
+    def stop_event_streams(self) -> bool:
         """
         Stop event streams
         :return: bool True on success
