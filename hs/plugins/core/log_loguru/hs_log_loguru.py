@@ -14,7 +14,7 @@ class LogLoguru(HSPlugin):
 
     def __init__(self):
         super().__init__()
-        self.order = 3
+        self.order = 40
 
     def activate(self):
         logger.add(

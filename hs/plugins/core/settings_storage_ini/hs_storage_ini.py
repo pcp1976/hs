@@ -10,7 +10,7 @@ class Ini(HSPlugin):
     def __init__(self):
         super().__init__()
         self.config = ConfigObj()
-        self.order = 2
+        self.order = 30
 
     @settings_storage
     def settings_get_value(self, setting_name: str):

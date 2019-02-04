@@ -20,7 +20,6 @@ class HSCrypto(HSPlugin):
         self.public_keyfile = None
         self.crypto_enabled = True
         self.crypto_behaviour: CryptoBehaviour = None
-        self.order = 5
 
     def activate(self):
         self.file_dir = self.pm.hook.filepath_get(plugin_name=self.name)[0]

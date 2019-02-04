@@ -12,7 +12,7 @@ class FilePaths(HSPlugin):
 
     def __init__(self):
         super().__init__()
-        self.order = 1
+        self.order = 20
 
     @filepaths
     def filepath_get(self, plugin_name: str):

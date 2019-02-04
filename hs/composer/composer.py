@@ -5,6 +5,8 @@ import pluggy
 
 
 class Composer:
+    drop_list = ["eventstore"]
+
     def __init__(self):
         self.plugin_places = [os.path.join(os.getcwd(), "plugins")]
         self.simple_plugin_manager = PluginManager()
@@ -28,11 +30,9 @@ class Composer:
             plugin: HSPlugin = pluginInfo.plugin_object
             plugin.link_pm(self.pm)
             # TODO: implement this in a settings file
-            if plugin.name == "eventstore":
+            if plugin.name in self.drop_list:
                 drop.append(pluginInfo)
                 self.pm.unregister(plugin)
-
-        # activate after all possible hooks are registered so that plugins can use hooks
         for pluginInfo in self.plugin_info_list:
             if pluginInfo not in drop:
                 plugin: HSPlugin = pluginInfo.plugin_object

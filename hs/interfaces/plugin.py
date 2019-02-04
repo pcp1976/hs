@@ -9,7 +9,7 @@ class HSPlugin(IPlugin):
     def __init__(self):
         super().__init__()
         self.pm: PluginManager = None
-        self.order = 100
+        self.order = 1000
         self.log: LogFacade = None
         self.event = None
 

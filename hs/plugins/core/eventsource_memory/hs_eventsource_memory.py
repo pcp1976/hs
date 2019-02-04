@@ -16,7 +16,7 @@ class EventSourceMemory(HSPlugin):
         super().__init__()
         self.streams = {}
         self.subscriptions = {}
-        self.order = 4
+        self.order = 50
 
     def activate(self):
         self.log.notice(f"activated {self.order}")
@@ -84,7 +84,7 @@ class EventSourceMemory(HSPlugin):
             for sub in self.subscriptions[stream_name]:
                 for callback in self.subscriptions[stream_name][sub]:
                     self.log.debug(f"calling {callback} with {event}")
-                    callback(event)
+                    callback(event_type=event_type, event_data=event_data, event_metadata=event_metadata)
         except KeyError:
             self.log.error(f"no subscriptions for stream '{stream_name}'")
 

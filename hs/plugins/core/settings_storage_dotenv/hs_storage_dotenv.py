@@ -13,7 +13,7 @@ class DotEnv(HSPlugin):
 
     def __init__(self):
         super().__init__()
-        self.order = 0
+        self.order = 10
 
     @settings_storage
     def settings_get_value(self, setting_name: str):

@@ -15,7 +15,6 @@ class RandomName(HSPlugin):
 
     def __init__(self):
         super().__init__()
-        self.order = 1
 
     @hs_spec
     def get_random_name(self):
@@ -36,7 +35,7 @@ class RandomName(HSPlugin):
     def activate(self):
         """
         TODO: Need to track used names! Suggest storing in config as list.
-        TODO: also, add a "return name" spec, so that used names can be recirculated once dome with
+        TODO: also, add a "return name" spec, so that used names can be recirculated once done with
         """
         self.log.notice(f"activated {self.order}")
 
